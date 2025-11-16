@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.ArtTagMapper">
+    <select id="getArticleIdsByTagIds" resultType="java.lang.Integer">
+        select article_id from art_tag where
+            tag_id in
+        <foreach collection="tagIds" item="tagId" open="(" close=")" separator=",">
+        #{tagId}
+    </foreach>
+    </select>
+
+    <select id="getTagsByArticleId" resultType="com.blog.entities.Tag">
+        select art_tag.tag_id as `id`,art_tag.tag_name,tag.tag_status as tagStatus from art_tag,tag
+        where art_tag.tag_id= tag.id and art_tag.article_id=#{articleId} and tag.tag_status=1
+    </select>
+</mapper>

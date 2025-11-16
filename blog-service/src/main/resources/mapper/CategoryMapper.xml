@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.CategoryMapper">
+
+    <insert id="insertCategory" parameterType="com.blog.entities.Category">
+        insert into category(category_name, category_status) values(#{categoryName}, #{categoryStatus})
+    </insert>
+    
+    <update id="updateCategory" parameterType="com.blog.entities.Category">
+        update category
+        <set>
+            <if test="categoryName != null">
+                category_name = #{categoryName},
+            </if>
+            <if test="categoryStatus != null">
+                category_status = #{categoryStatus}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    
+    <delete id="deleteCategory" parameterType="int">
+        delete from category where id = #{id}
+    </delete>
+    
+    <select id="pageQueryCategory" resultType="Category">
+        select * from category
+        <where>
+            <if test="categoryName != null">
+                category_name like concat('%', #{categoryName}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>
