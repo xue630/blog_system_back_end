@@ -42,4 +42,12 @@ public class AliOssTest {
     public void testConfig(){
         System.out.println(aliOssProperties);
     }
+    @Test
+    public void testDelete() throws IOException {
+        AliOssUtil.delete(aliOssProperties.getEndpoint(),
+                aliOssProperties.getAccessKeyId(),
+                aliOssProperties.getAccessKeySecret(),
+                aliOssProperties.getBucketName(),
+                "article/测试文件.md");
+    }
 }

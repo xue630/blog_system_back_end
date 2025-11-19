@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class CommonServiceImpl implements CommonService {
 
     @Autowired
@@ -56,5 +57,15 @@ public class CommonServiceImpl implements CommonService {
                 file.getBytes(),
                 "article/"+fileName);
         return url;
+    }
+
+    @Override
+    public void fileDelete(String fileName) throws IOException {
+        AliOssUtil.delete(aliOssProperties.getEndpoint(),
+                aliOssProperties.getAccessKeyId(),
+                aliOssProperties.getAccessKeySecret(),
+                aliOssProperties.getBucketName(),
+                "article/" + fileName+".md");
+        log.info("删除文件{}成功",fileName);
     }
 }

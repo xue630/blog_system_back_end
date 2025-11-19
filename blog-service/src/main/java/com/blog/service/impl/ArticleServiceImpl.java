@@ -1,28 +1,36 @@
 package com.blog.service.impl;
 
+import com.blog.context.ArticleNameSet;
 import com.blog.dto.article.AddArticleDTO;
 import com.blog.dto.article.GetValidArticleDTO;
 import com.blog.dto.article.PageQueryArticleDTO;
 import com.blog.dto.article.UpdateArticleDTO;
 import com.blog.entities.Article;
 import com.blog.entities.Tag;
+import com.blog.exception.AliOSSException;
 import com.blog.mapper.ArtTagMapper;
 import com.blog.mapper.ArticleMapper;
 import com.blog.mapper.TagMapper;
 import com.blog.result.PageQuery;
 import com.blog.service.ArticleService;
+import com.blog.service.CommonService;
+import com.blog.utils.AliOssUtil;
 import com.blog.vo.article.PageQueryArticleVO;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
@@ -32,6 +40,8 @@ public class ArticleServiceImpl implements ArticleService {
     private ArtTagMapper artTagMapper;
     @Autowired
     private TagMapper tagMapper;
+    @Autowired
+    private CommonService commonService;
 
     @Override
     @Transactional
@@ -88,11 +98,18 @@ public class ArticleServiceImpl implements ArticleService {
         artTagMapper.deleteTagsByArticleId(id);
         
         // 创建文章对象并设置ID
-        Article article = new Article();
-        article.setId(id);
-        
+        Article article = articleMapper.getArticleById(id);
+        try {
+            commonService.fileDelete(article.getArticleName());
+        } catch (IOException e) {
+            throw new AliOSSException("删除文章文件失败");
+        }
+
         // 删除文章
         articleMapper.deleteArticle(article);
+
+        // 从文章名称集合中移除文章名称
+        ArticleNameSet.getInstance().remove(article.getArticleName());
     }
 
     @Override
@@ -112,6 +129,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public PageQuery<PageQueryArticleVO> pageQueryArticle(PageQueryArticleDTO articleDTO) {
 
         if(articleDTO.getArticleTitle().isEmpty()){//将空字符串转化为null
@@ -151,6 +169,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public List<PageQueryArticleVO> getValidAllArticle(GetValidArticleDTO articleDTO) {
         if(articleDTO.getArticleTitle().isEmpty()){//将空字符串转化为null
             articleDTO.setArticleTitle(null);
@@ -179,5 +198,13 @@ public class ArticleServiceImpl implements ArticleService {
             result.add(tempPQAVO);
         });
         return result;
+    }
+    @PostConstruct
+    public void init(){
+        articleMapper.getAllArticleName().forEach(
+                articleName -> ArticleNameSet.getInstance()
+                        .add(articleName)
+        );
+        log.info("文章名集合初始化完成{}",ArticleNameSet.getInstance());
     }
 }

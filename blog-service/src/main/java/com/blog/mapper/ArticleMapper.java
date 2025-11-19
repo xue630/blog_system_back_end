@@ -1,6 +1,5 @@
 package com.blog.mapper;
 
-import com.blog.dto.article.GetValidArticleDTO;
 import com.blog.entities.Article;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
@@ -42,4 +41,12 @@ public interface ArticleMapper {
      */
 
     List<Article> getValidArticle(List<Integer> ids,String articleTitle, Integer categoryId);
+
+
+    /**
+     * 获取所有文章名，供文章名缓存集合使用
+     * @return
+     */
+    @Select("select article_name from article")
+    List<String> getAllArticleName();
 }

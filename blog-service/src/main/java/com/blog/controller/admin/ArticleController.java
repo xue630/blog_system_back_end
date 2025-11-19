@@ -1,14 +1,19 @@
 package com.blog.controller.admin;
 
+import com.blog.constant.MessageConstant;
+import com.blog.context.ArticleNameSet;
 import com.blog.dto.article.AddArticleDTO;
 import com.blog.dto.article.PageQueryArticleDTO;
 import com.blog.dto.article.UpdateArticleDTO;
+import com.blog.exception.ArticleException;
 import com.blog.result.PageQuery;
 import com.blog.result.Result;
 import com.blog.service.ArticleService;
+import com.blog.service.CommonService;
 import com.blog.vo.article.PageQueryArticleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +29,9 @@ public class ArticleController {
     @PostMapping()
     public Result<String> addArticle(@Valid @RequestBody AddArticleDTO addArticleDTO) {
         log.info("ArticleController addArticleDTO(处理添加文章事件):{}", addArticleDTO);
+        if(ArticleNameSet.getInstance().contains(addArticleDTO.getArticleName())){
+            throw new ArticleException(MessageConstant.REPETITION_FILENAME);
+        }
         articleService.addArticle(addArticleDTO);
 
         return Result.success();

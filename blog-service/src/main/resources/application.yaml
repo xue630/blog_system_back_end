@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: prod
   main:
     allow-circular-references: true
   datasource:
@@ -47,7 +47,7 @@ spring:
         reset-enable: false
         login-username: ${blog.druid.login-username}
         login-password: ${blog.druid.login-password}
-        allow: 127.0.0.1
+        allow: 0.0.0.0
 
       # 配置监控统计拦截的filters
       filters: stat,wall,log4j2
