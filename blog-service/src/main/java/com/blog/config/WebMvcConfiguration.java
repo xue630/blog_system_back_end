@@ -14,7 +14,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addCorsMappings(CorsRegistry registry) {
-        //TODO 上线前要修改一下跨域
+        //上线前要修改一下跨域，生产环境使用nginx不需要配置跨域
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")  // 或者指定具体域名
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
@@ -26,7 +26,8 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminJwtInterceptor)
-                .addPathPatterns("/admin/**").excludePathPatterns("/admin/user/login");
+                .addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/user/login");
 
     }
 }

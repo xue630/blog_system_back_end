@@ -1,18 +1,23 @@
 package com.blog.service.impl;
 
 import com.blog.constant.MessageConstant;
+import com.blog.dto.common.UpdateAnnoDTO;
+import com.blog.entities.Announcement;
 import com.blog.entities.Article;
 import com.blog.exception.AliOSSException;
+import com.blog.mapper.AnnouncementMapper;
 import com.blog.mapper.ArticleMapper;
 import com.blog.properties.AliOssProperties;
 import com.blog.service.CommonService;
 import com.blog.utils.AliOssUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -23,6 +28,8 @@ public class CommonServiceImpl implements CommonService {
     AliOssProperties aliOssProperties;
     @Autowired
     ArticleMapper articleMapper;
+    @Autowired
+    AnnouncementMapper announcementMapper;
 
     @Override
     public String getArticleContent(Integer articleId) throws IOException {
@@ -68,4 +75,18 @@ public class CommonServiceImpl implements CommonService {
                 "article/" + fileName+".md");
         log.info("删除文件{}成功",fileName);
     }
+
+    @Override
+    public Announcement getAnnouncement() {
+        return announcementMapper.getAnno();
+    }
+
+    @Override
+    public void updateAnnouncement(UpdateAnnoDTO updateAnnoDTO) {
+        Announcement announcement = new Announcement();
+        BeanUtils.copyProperties(updateAnnoDTO,announcement);
+        announcement.setCreateTime(LocalDateTime.now());
+        announcementMapper.updateContent(announcement);
+    }
+
 }

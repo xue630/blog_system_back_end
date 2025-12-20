@@ -15,6 +15,10 @@ public class MessageConstant {
 
     public static final String REPETITION_FILENAME = "重复的文件名";
 
+
+    public static final String ADMIN_ILL_IP = "非法IP";
+    public static final String IP_IS_LOCKET = "IP已锁定";
+
 //    public static final String ARTICLE_INSERT_MESSAGE_HAVE_EMPTY = "添加文章有字段为空";
 
 }

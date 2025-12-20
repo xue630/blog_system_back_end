@@ -4,7 +4,7 @@ import com.blog.dto.UserLoginDTO;
 import com.blog.vo.UserLoginVO;
 
 public interface UserService {
-    UserLoginVO login(UserLoginDTO userLoginDTO);
+    UserLoginVO login(UserLoginDTO userLoginDTO,String Ip);
 
     void logout();
 }

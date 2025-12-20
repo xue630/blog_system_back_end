@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<!--    <property name="LOG_FILE_PATH" value="/var/logs/blog"/>-->
+    <property name="LOG_FILE_PATH" value="C:\Users\xue\Desktop\文件夹\个人博客网站系统\后端工程\blog\logs"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 文件输出 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE_PATH}/blog.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE_PATH}/blog.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE_PATH}/blogError.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--定义归档文件的命名模式-->
+            <fileNamePattern>${LOG_FILE_PATH}/blogError.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!--单个日志文件的最大大小-->
+            <maxFileSize>10MB</maxFileSize>
+            <!--清理旧文件的间隔-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!-- 配置过滤器 -->
+            <level>ERROR</level>
+            <!-- 捕获错误日志 -->
+            <onMatch>ACCEPT</onMatch>
+            <!-- 符合条件则accept即接受 -->
+            <onMismatch>DENY</onMismatch>
+            <!-- 不符合则丢弃 -->
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+</configuration>

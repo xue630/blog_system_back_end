@@ -4,6 +4,7 @@ import com.blog.properties.AliOssProperties;
 import com.blog.utils.AliOssUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.*;
@@ -13,6 +14,16 @@ public class AliOssTest {
 
     @Autowired
     AliOssProperties aliOssProperties;
+
+    @Value("${AllowIp}")
+    private String AllowIp;
+
+    @Test
+    public void testAllowIp(){
+        System.out.println(AllowIp);
+    }
+
+
     @Test
     public void testUpload() throws IOException {
         File file = new File("C:\\Users\\xue\\Desktop\\文件夹\\笔记资料\\Maven依赖管理项目构建工具.md");
