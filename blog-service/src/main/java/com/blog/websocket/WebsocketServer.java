@@ -43,7 +43,7 @@ public class WebsocketServer {
 
         if(objectMapper.readValue(message,String.class).equals("ping")){
             try {
-                log.info("pong");
+                //log.info("pong");
                 sendMessageToAdmin("pong");
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -53,6 +53,9 @@ public class WebsocketServer {
 
     public void sendMessageToAdmin(String message) throws IOException {
         Session session = sessionMaps.get("admin");
+        if(session==null){
+            return;
+        }
         session.getBasicRemote().sendText(message);
     }
 }
