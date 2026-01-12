@@ -32,4 +32,6 @@ public class PageQueryArticleVO {
 
     private List<Tag> tags;
 
+    private Integer viewCount;
+
 }

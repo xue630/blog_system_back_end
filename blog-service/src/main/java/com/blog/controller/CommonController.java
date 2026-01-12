@@ -8,12 +8,14 @@ import com.blog.exception.AliOSSException;
 import com.blog.exception.ArticleException;
 import com.blog.result.Result;
 import com.blog.service.CommonService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.http.HttpRequest;
 
 @RestController
 @Slf4j
@@ -23,12 +25,12 @@ public class CommonController {
     private CommonService commonService;
 
     @GetMapping("/articleContent")
-    public Result<String> getArticleContent(@RequestParam("id") Integer articleId) throws IOException {
+    public Result<String> getArticleContent(HttpServletRequest request, @RequestParam("id") Integer articleId) throws IOException {
         log.info("公共接口处理获取文章内容请求，得到前端数据:ArticleId={}",articleId);
         if(articleId == null||articleId<=0){
             throw new AliOSSException(MessageConstant.ARTID_ILL);
         }
-        String articleContent = commonService.getArticleContent(articleId);
+        String articleContent = commonService.getArticleContent(request,articleId);
         return Result.success(articleContent);
     }
 

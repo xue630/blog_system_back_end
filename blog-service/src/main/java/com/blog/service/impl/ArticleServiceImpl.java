@@ -5,10 +5,12 @@ import com.blog.dto.article.AddArticleDTO;
 import com.blog.dto.article.GetValidArticleDTO;
 import com.blog.dto.article.PageQueryArticleDTO;
 import com.blog.dto.article.UpdateArticleDTO;
+import com.blog.entities.ArtView;
 import com.blog.entities.Article;
 import com.blog.entities.Tag;
 import com.blog.exception.AliOSSException;
 import com.blog.mapper.ArtTagMapper;
+import com.blog.mapper.ArtViewMapper;
 import com.blog.mapper.ArticleMapper;
 import com.blog.mapper.TagMapper;
 import com.blog.result.PageQuery;
@@ -38,6 +40,8 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleMapper articleMapper;
     @Autowired
     private ArtTagMapper artTagMapper;
+    @Autowired
+    private ArtViewMapper artViewMapper;
     @Autowired
     private TagMapper tagMapper;
     @Autowired
@@ -185,18 +189,33 @@ public class ArticleServiceImpl implements ArticleService {
             articleIds = artTagMapper.getArticleIdsByTagIds(articleDTO.getTagIds());
         }
 
-        if(articleIds!=null && articleIds.isEmpty()){
+        if(articleIds!=null && articleIds.isEmpty()){//此标签组合下没有文章则返回空
             return result;
         }
 
+                        /*上面是按标签匹配文章的逻辑*/
         List<Article> validArticle = articleMapper.getValidArticle(articleIds, articleDTO.getArticleTitle(), articleDTO.getCategoryId());
 
         validArticle.forEach(article -> {//注意：此时每个对象的Tags列表还为空
             PageQueryArticleVO tempPQAVO = new PageQueryArticleVO();
+
+            /*注入数据*/
             BeanUtils.copyProperties(article,tempPQAVO);
+
+            /*注入文章对应的标签*/
             tempPQAVO.setTags(artTagMapper.getTagsByArticleId(article.getId()));//再根据此文章id查询还有哪些标签
+
+
+            Integer ViewCount = artViewMapper.getViewByArtId(article.getId());
+            if(ViewCount==null){
+                //查询无记录则初始化进数据库
+                artViewMapper.insertArticleView(new ArtView(article.getId(),0));
+                ViewCount=0;
+            }
+            tempPQAVO.setViewCount(ViewCount);
             result.add(tempPQAVO);
         });
+
         return result;
     }
     @PostConstruct
